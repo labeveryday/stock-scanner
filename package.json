@@ -4,8 +4,9 @@
   "description": "Real-time stock scanner for Mac",
   "main": "dist/main/main.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:main\" \"npm run dev:renderer\"",
-    "dev:main": "tsc -p tsconfig.main.json && electron dist/main/main.js",
+    "dev": "node scripts/dev.js",
+    "dev:old": "concurrently \"npm run dev:main\" \"npm run dev:renderer\"",
+    "dev:main": "tsc -p tsconfig.main.json && NODE_ENV=development electron dist/main/main.js",
     "dev:renderer": "vite",
     "build": "npm run build:main && npm run build:renderer",
     "build:main": "tsc -p tsconfig.main.json",
