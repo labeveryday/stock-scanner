@@ -1,0 +1,58 @@
+{
+  "name": "stock-scanner",
+  "version": "1.0.0",
+  "description": "Real-time stock scanner for Mac",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:main\" \"npm run dev:renderer\"",
+    "dev:main": "tsc -p tsconfig.main.json && electron dist/main/main.js",
+    "dev:renderer": "vite",
+    "build": "npm run build:main && npm run build:renderer",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "vite build",
+    "package": "electron-builder",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["electron", "react", "typescript", "stock", "scanner"],
+  "author": "dlight",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "concurrently": "^8.2.0",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.6.0",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "typescript": "^5.1.0",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "ws": "^8.14.0",
+    "recharts": "^2.8.0",
+    "lucide-react": "^0.294.0"
+  },
+  "build": {
+    "appId": "com.dlight.stock-scanner",
+    "productName": "Stock Scanner",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.finance"
+    }
+  }
+}
