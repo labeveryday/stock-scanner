@@ -23,6 +23,9 @@ body {
   padding: 12px 20px;
   border-bottom: 1px solid #404040;
   -webkit-app-region: drag;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header h1 {
@@ -32,6 +35,42 @@ body {
   font-size: 18px;
   font-weight: 600;
   color: #00d4aa;
+}
+
+.header-controls {
+  -webkit-app-region: no-drag;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #404040;
+  border: none;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: #505050;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .logo {
@@ -83,28 +122,115 @@ body {
   gap: 8px;
 }
 
-.stock-item {
+.add-symbol-form {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.symbol-input {
+  flex: 1;
+  background: #353535;
+  border: 1px solid #505050;
+  color: #ffffff;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.symbol-input:focus {
+  outline: none;
+  border-color: #00d4aa;
+}
+
+.add-btn {
+  background: #00d4aa;
+  border: none;
+  color: #ffffff;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-btn:hover {
+  background: #00b894;
+}
+
+.error-message {
+  background: #4a2c2a;
+  border: 1px solid #ff4757;
+  color: #ff4757;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.loading {
+  text-align: center;
+  color: #888888;
+  padding: 20px;
+  font-size: 12px;
+}
+
+.stock-item {
+  padding: 12px;
   background: #353535;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s;
+  margin-bottom: 8px;
 }
 
 .stock-item:hover {
   background: #404040;
 }
 
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
 .symbol {
   font-weight: 600;
   color: #ffffff;
+  font-size: 14px;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.remove-btn:hover {
+  background: #ff4757;
+  color: #ffffff;
+}
+
+.stock-price {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
 }
 
 .price {
-  color: #cccccc;
+  color: #ffffff;
+  font-weight: 500;
 }
 
 .change {
@@ -118,6 +244,11 @@ body {
 
 .change.negative {
   color: #ff4757;
+}
+
+.stock-volume {
+  font-size: 11px;
+  color: #888888;
 }
 
 .alerts {

@@ -1,7 +1,30 @@
-import React from 'react'
-import { TrendingUp, AlertTriangle, BarChart3, Newspaper } from 'lucide-react'
+import React, { useState } from 'react'
+import { TrendingUp, AlertTriangle, BarChart3, Newspaper, RefreshCw, Plus } from 'lucide-react'
+import { useStockData } from './hooks/useStockData'
 
 const App: React.FC = () => {
+  const { quotes, loading, error, refreshQuotes, addSymbol, removeSymbol } = useStockData()
+  const [newSymbol, setNewSymbol] = useState('')
+
+  const handleAddSymbol = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (newSymbol.trim()) {
+      addSymbol(newSymbol.trim())
+      setNewSymbol('')
+    }
+  }
+
+  const formatPrice = (price: number) => `$${price.toFixed(2)}`
+  const formatChange = (change: number, changePercent: number) => {
+    const sign = change >= 0 ? '+' : ''
+    return `${sign}${changePercent.toFixed(2)}%`
+  }
+  const formatVolume = (volume: number) => {
+    if (volume >= 1000000) return `${(volume / 1000000).toFixed(1)}M`
+    if (volume >= 1000) return `${(volume / 1000).toFixed(0)}K`
+    return volume.toString()
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -9,6 +32,16 @@ const App: React.FC = () => {
           <TrendingUp className="logo" />
           Stock Scanner
         </h1>
+        <div className="header-controls">
+          <button 
+            className="refresh-btn" 
+            onClick={refreshQuotes}
+            disabled={loading}
+          >
+            <RefreshCw size={16} className={loading ? 'spinning' : ''} />
+            Refresh
+          </button>
+        </div>
       </header>
       
       <div className="main-layout">
@@ -18,22 +51,54 @@ const App: React.FC = () => {
               <BarChart3 size={16} />
               Watchlist
             </h2>
+            
+            <form className="add-symbol-form" onSubmit={handleAddSymbol}>
+              <input
+                type="text"
+                placeholder="Add symbol (e.g., AAPL)"
+                value={newSymbol}
+                onChange={(e) => setNewSymbol(e.target.value.toUpperCase())}
+                className="symbol-input"
+              />
+              <button type="submit" className="add-btn">
+                <Plus size={14} />
+              </button>
+            </form>
+
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+
             <div className="watchlist">
-              <div className="stock-item">
-                <span className="symbol">AAPL</span>
-                <span className="price">$150.25</span>
-                <span className="change positive">+2.4%</span>
-              </div>
-              <div className="stock-item">
-                <span className="symbol">TSLA</span>
-                <span className="price">$248.50</span>
-                <span className="change negative">-1.2%</span>
-              </div>
-              <div className="stock-item">
-                <span className="symbol">NVDA</span>
-                <span className="price">$875.30</span>
-                <span className="change positive">+5.8%</span>
-              </div>
+              {loading && quotes.length === 0 ? (
+                <div className="loading">Loading...</div>
+              ) : (
+                quotes.map((quote) => (
+                  <div key={quote.symbol} className="stock-item">
+                    <div className="stock-header">
+                      <span className="symbol">{quote.symbol}</span>
+                      <button 
+                        className="remove-btn"
+                        onClick={() => removeSymbol(quote.symbol)}
+                        title="Remove from watchlist"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <div className="stock-price">
+                      <span className="price">{formatPrice(quote.price)}</span>
+                      <span className={`change ${quote.change >= 0 ? 'positive' : 'negative'}`}>
+                        {formatChange(quote.change, quote.changePercent)}
+                      </span>
+                    </div>
+                    <div className="stock-volume">
+                      Vol: {formatVolume(quote.volume)}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
           
