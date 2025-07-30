@@ -1,29 +1,14 @@
 import React, { useState } from 'react'
-import { TrendingUp, AlertTriangle, BarChart3, Newspaper, RefreshCw, Plus } from 'lucide-react'
+import { TrendingUp, AlertTriangle, BarChart3, Newspaper, RefreshCw } from 'lucide-react'
 import { useStockData } from './hooks/useStockData'
+import { useWatchlist } from './hooks/useWatchlist'
+import { StockItem } from './components/StockItem'
+import { WatchlistControls } from './components/WatchlistControls'
 
 const App: React.FC = () => {
-  const { quotes, loading, error, refreshQuotes, addSymbol, removeSymbol } = useStockData()
-  const [newSymbol, setNewSymbol] = useState('')
-
-  const handleAddSymbol = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (newSymbol.trim()) {
-      addSymbol(newSymbol.trim())
-      setNewSymbol('')
-    }
-  }
-
-  const formatPrice = (price: number) => `$${price.toFixed(2)}`
-  const formatChange = (change: number, changePercent: number) => {
-    const sign = change >= 0 ? '+' : ''
-    return `${sign}${changePercent.toFixed(2)}%`
-  }
-  const formatVolume = (volume: number) => {
-    if (volume >= 1000000) return `${(volume / 1000000).toFixed(1)}M`
-    if (volume >= 1000) return `${(volume / 1000).toFixed(0)}K`
-    return volume.toString()
-  }
+  const watchlist = useWatchlist()
+  const { quotes, loading, error, refreshQuotes } = useStockData(watchlist.symbols)
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
 
   return (
     <div className="app">
@@ -52,18 +37,13 @@ const App: React.FC = () => {
               Watchlist
             </h2>
             
-            <form className="add-symbol-form" onSubmit={handleAddSymbol}>
-              <input
-                type="text"
-                placeholder="Add symbol (e.g., AAPL)"
-                value={newSymbol}
-                onChange={(e) => setNewSymbol(e.target.value.toUpperCase())}
-                className="symbol-input"
-              />
-              <button type="submit" className="add-btn">
-                <Plus size={14} />
-              </button>
-            </form>
+            <WatchlistControls
+              onAddSymbol={watchlist.addSymbol}
+              onClearAll={watchlist.clearAll}
+              onExport={watchlist.exportWatchlist}
+              onImport={watchlist.importWatchlist}
+              symbolCount={watchlist.symbols.length}
+            />
 
             {error && (
               <div className="error-message">
@@ -76,27 +56,13 @@ const App: React.FC = () => {
                 <div className="loading">Loading...</div>
               ) : (
                 quotes.map((quote) => (
-                  <div key={quote.symbol} className="stock-item">
-                    <div className="stock-header">
-                      <span className="symbol">{quote.symbol}</span>
-                      <button 
-                        className="remove-btn"
-                        onClick={() => removeSymbol(quote.symbol)}
-                        title="Remove from watchlist"
-                      >
-                        ×
-                      </button>
-                    </div>
-                    <div className="stock-price">
-                      <span className="price">{formatPrice(quote.price)}</span>
-                      <span className={`change ${quote.change >= 0 ? 'positive' : 'negative'}`}>
-                        {formatChange(quote.change, quote.changePercent)}
-                      </span>
-                    </div>
-                    <div className="stock-volume">
-                      Vol: {formatVolume(quote.volume)}
-                    </div>
-                  </div>
+                  <StockItem
+                    key={quote.symbol}
+                    quote={quote}
+                    onRemove={watchlist.removeSymbol}
+                    onClick={setSelectedSymbol}
+                    isSelected={selectedSymbol === quote.symbol}
+                  />
                 ))
               )}
             </div>
