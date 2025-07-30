@@ -24,11 +24,14 @@ export function useWatchlist(): UseWatchlistResult {
 
   // Load watchlist from localStorage on mount
   useEffect(() => {
+    console.log('useWatchlist: Loading from localStorage')
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
+      console.log('useWatchlist: Saved data:', saved)
       if (saved) {
         const parsed = JSON.parse(saved)
         if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log('useWatchlist: Using saved symbols:', parsed)
           setSymbols(parsed)
           return
         }
@@ -38,6 +41,7 @@ export function useWatchlist(): UseWatchlistResult {
     }
     
     // Use default symbols if nothing saved or error
+    console.log('useWatchlist: Using default symbols:', DEFAULT_SYMBOLS)
     setSymbols(DEFAULT_SYMBOLS)
   }, [])
 

@@ -4,8 +4,8 @@ import { StockQuote } from '../../../types/stock'
 // Mock API service for renderer process - will be replaced with IPC calls
 class MockStockApiService {
   async getStockQuote(symbol: string): Promise<StockQuote> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500))
+    // Simulate API delay (shorter for better UX)
+    await new Promise(resolve => setTimeout(resolve, 200))
     
     // Mock data with realistic values
     const mockData: Record<string, Partial<StockQuote>> = {
@@ -49,14 +49,16 @@ export interface UseStockDataResult {
   removeSymbol: (symbol: string) => void
 }
 
-export function useStockData(initialSymbols: string[] = ['AAPL', 'TSLA', 'NVDA']): UseStockDataResult {
-  const [symbols, setSymbols] = useState<string[]>(initialSymbols)
+export function useStockData(symbols: string[] = ['AAPL', 'TSLA', 'NVDA']): UseStockDataResult {
   const [quotes, setQuotes] = useState<StockQuote[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const fetchQuotes = useCallback(async () => {
-    if (symbols.length === 0) return
+    if (symbols.length === 0) {
+      setQuotes([])
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -77,15 +79,13 @@ export function useStockData(initialSymbols: string[] = ['AAPL', 'TSLA', 'NVDA']
   }, [fetchQuotes])
 
   const addSymbol = useCallback((symbol: string) => {
-    const upperSymbol = symbol.toUpperCase()
-    setSymbols(prev => {
-      if (prev.includes(upperSymbol)) return prev
-      return [...prev, upperSymbol]
-    })
+    // This is now handled by the watchlist hook
+    console.log('addSymbol called - should be handled by watchlist')
   }, [])
 
   const removeSymbol = useCallback((symbol: string) => {
-    setSymbols(prev => prev.filter(s => s !== symbol.toUpperCase()))
+    // This is now handled by the watchlist hook
+    console.log('removeSymbol called - should be handled by watchlist')
   }, [])
 
   // Initial fetch

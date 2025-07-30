@@ -10,6 +10,14 @@ const App: React.FC = () => {
   const { quotes, loading, error, refreshQuotes } = useStockData(watchlist.symbols)
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
 
+  // Debug logging
+  console.log('App render:', { 
+    watchlistSymbols: watchlist.symbols, 
+    quotesLength: quotes.length, 
+    loading, 
+    error 
+  })
+
   return (
     <div className="app">
       <header className="header">
@@ -53,7 +61,11 @@ const App: React.FC = () => {
 
             <div className="watchlist">
               {loading && quotes.length === 0 ? (
-                <div className="loading">Loading...</div>
+                <div className="loading">Loading stocks...</div>
+              ) : quotes.length === 0 ? (
+                <div className="loading">
+                  {watchlist.symbols.length === 0 ? 'Add stocks to your watchlist' : 'No stock data available'}
+                </div>
               ) : (
                 quotes.map((quote) => (
                   <StockItem
